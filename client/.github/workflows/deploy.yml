@@ -1,0 +1,21 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Deploy to local WSL
+        run: |
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          cd ~/nextjs-free
+          git fetch --all
+          git reset --hard origin/main
+          cd client
+          npm i --force
+          npm run build
+          pm2 restart NextJs || pm2 start npm --name NextJs -- start
